@@ -2,3 +2,7 @@
 Capstone 2019 Gardenia's server side code
 <br><br>
 Made by S.H, K.H, Y.H
+
+## Requirements
+Python==3.7.3
+& requiremnets.txt
