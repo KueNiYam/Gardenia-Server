@@ -1,2 +1,4 @@
 # Gardenia-Server
-캡스톤 2019 SH KH YH
+Capstone 2019 Server Side
+<br><br>
+Made by S.H, K.H, Y.H
