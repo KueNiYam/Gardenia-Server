@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.4/socket.io.min.js"></script>
+    <meta charset="UTF-8">
+    <title>websock test</title>
+</head>
+<body>
+ 
+<h1>Received</h1>
+<div id="received">
+ 
+</div>
+ 
+<form id="broadcast" action="#">
+    <input id="input-data" type="text"/>
+    <input id="submit-btn" type="submit"/>
+</form>
+ 
+</body>
+<script type="text/javascript" charset="utf-8">
+    var socket = io.connect("http://192.168.0.27:5000");
+    socket.on('response', function () {
+        socket.emit('message', { data: 'I\'m connected!' });
+    });
+
+    $(document).ready(function(){
+        $('#submit-btn').click(function() {
+            socket.emit('message', { data: $('#input-data').val() });
+        })
+    });
+</script>
+</html>
