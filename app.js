@@ -1,14 +1,29 @@
-var WebSocketServer = require('websocket').server;
-var http = require('http')
- 
-var server = http.createServer(function(request, response) {
+// For WebSocket
+const http = require('http')
+const WebSocketServer = require('websocket').server;
+
+// For Google-Vision
+const Vision = require('./vision.js');
+let vision = new Vision();
+
+/* Google-Vision Example Code */
+let image =  './images/IU.jpg'
+let fs = require('fs');
+fs.readFile(image, function(err, data) {
+    vision.detect(data).then((json) => {
+        console.log(json);
+    });
+});
+/* -------------------------------------------------------------------- */
+
+const server = http.createServer(function(request, response) {
     console.log((new Date()) + ' Received request for ' + request.url);
     response.writeHead(404); // response.writeHead(status_code, header_json)
     response.end();
 });
 
-server.listen(8080, function() {
-    console.log((new Date()) + ' Server is listening on port 8080');
+server.listen(5000, function() {
+    console.log((new Date()) + ' Server is listening on port 5000');
 });
  
 wsServer = new WebSocketServer({
