@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    const ws = new WebSocket("ws://127.0.0.1:8080");
+    const ws = new WebSocket("ws://127.0.0.1:5000");
 
     ws.onopen = function (event) {
         ws.send(JSON.stringify({'data':'connected'}));
