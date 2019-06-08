@@ -64,54 +64,57 @@ wsServer.on('request', function (request) {
         if (message.type === 'utf8') {
             let data = '';
             console.log('Received Message: ' + message.utf8Data);
-            console.log('Type: ' + typeof(message.utf8Data));
             connection.sendUTF(message.utf8Data);
 
             // 데이터 파싱
             try {
                 data = Parse.msgToJson(message.utf8Data).message;
-            } catch(error) {
-                connection.sendUTF(RouteError.makeErrorJsonString("InvalidDataError", "Received data is invalid"));
+            } catch (error) {
+                connection.sendUTF(Parse.suitToSend(RouteError.makeErrorJsonString("InvalidDataError", "Received data is invalid")));
                 console.log("error: " + error.message);
                 return;
             }
 
             // 적절한 데이터인지 확인
             if (typeof (data) != "object") {
-                connection.sendUTF(RouteError.makeErrorJsonString("NoJsonError", "The request is not JSON"));
+                connection.sendUTF(Parse.suitToSend(RouteError.makeErrorJsonString("NoJsonError", "The request is not JSON")));
                 return;
             }
             if (!("type" in data)) {
-                connection.sendUTF(RouteError.makeErrorJsonString("NoTypeError", "The request dosen't contain type key"));
+                connection.sendUTF(Parse.suitToSend(RouteError.makeErrorJsonString("NoTypeError", "The request dosen't contain type key")));
                 return;
             }
-            
+
             // 각 데이터에 따라 처리
             if (data["type"] == "face") {
                 if (!("image" in data))
-                    connection.sendUTF(RouteError.makeErrorJsonString("NoImageError", "The request dosen't contain image key"));
+                    connection.sendUTF(Parse.suitToSend(RouteError.makeErrorJsonString("NoImageError", "The request dosen't contain image key")));
                 else {
                     if ("timestamp" in data) {
-                        connection.sendUTF(JSON.stringify({
-                            "type": "imageAnalysis",
-                            "expression": vision.detect(data["image"]),
-                            "timestamp": data["timestamp"]
-                        }));
+                        vision.detect(Buffer.from(data["image"], 'base64')).then((json) => {
+                            connection.sendUTF(Parse.suitToSend(JSON.stringify({
+                                "type": "imageAnalysis",
+                                "expression": json,
+                                "timestamp": data["timestamp"]
+                            })));
+                        })
                     }
                     else {
-                        connection.sendUTF(JSON.stringify({
-                            "type": "imageAnalysis",
-                            "expressions": vision.detect(data["image"])
-                        }));
+                        vision.detect(Buffer.from(data["image"], 'base64')).then((json) => {
+                            connection.sendUTF(Parse.suitToSend(JSON.stringify({
+                                "type": "imageAnalysis",
+                                "expressions": json
+                            })));
+                        })
                     }
                 }
             }
             else if (data["type"] == "test") {
-                connection.sendUTF(JSON.stringify({
+                connection.sendUTF(Parse.suitToSend(JSON.stringify({
                     "type": "test",
                     "message": "we received test message",
                     "data": data
-                }));
+                })));
                 console.log(JSON.stringify({
                     "type": "test",
                     "message": "we received test message",
