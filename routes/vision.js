@@ -13,19 +13,22 @@ function Vision() {
 
 async function detect(image) {
     // await는 비동기적 함수를 기다려주는 역할
-    console.log("received image:", image);
+    // console.log("received image:", image);
+    console.log("Server start to detect face");
 
     const [result] = await this.client.faceDetection(image);
     const faces = result.faceAnnotations;
 
-    let face = faces[0];
+    if (!faces[0])
+        return;
 
+    let face = faces[0];
     return {
         'joy': face.joyLikelihood,
         'anger': face.angerLikelihood,
         'sorrow': face.sorrowLikelihood,
         'surprise': face.surpriseLikelihood
-    }
+    };
 }
 
 /* Export */

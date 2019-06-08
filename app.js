@@ -63,8 +63,9 @@ wsServer.on('request', function (request) {
     connection.on('message', function (message) {
         if (message.type === 'utf8') {
             let data = '';
-            console.log('Received Message: ' + message.utf8Data);
-            connection.sendUTF(message.utf8Data);
+            // console.log('Received Message: ' + message.utf8Data);
+            // connection.sendUTF(message.utf8Data);
+            console.log('Server received data')
 
             // 데이터 파싱
             try {
@@ -92,20 +93,20 @@ wsServer.on('request', function (request) {
                 else {
                     if ("timestamp" in data) {
                         vision.detect(Buffer.from(data["image"], 'base64')).then((json) => {
-                            connection.sendUTF(Parse.suitToSend(JSON.stringify({
-                                "type": "imageAnalysis",
-                                "expression": json,
-                                "timestamp": data["timestamp"]
-                            })));
+                            if (json) {
+                                connection.sendUTF(Parse.suitToSend(JSON.stringify({
+                                    "type": "imageAnalysis",
+                                    "expression": json,
+                                    "timestamp": data["timestamp"]
+                                })));
+                            }
+                            else {
+                                connection.sendUTF(Parse.suitToSend(RouteError.makeErrorJsonString("NoFaceError", "The request dosen't contain face")));
+                            }
                         })
                     }
                     else {
-                        vision.detect(Buffer.from(data["image"], 'base64')).then((json) => {
-                            connection.sendUTF(Parse.suitToSend(JSON.stringify({
-                                "type": "imageAnalysis",
-                                "expressions": json
-                            })));
-                        })
+                        connection.sendUTF(Parse.suitToSend(RouteError.makeErrorJsonString("NoTimeStampError", "The request dosen't contain timestamp")));
                     }
                 }
             }
