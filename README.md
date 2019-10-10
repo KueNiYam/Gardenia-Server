@@ -4,5 +4,10 @@ Capstone 2019 Gardenia's server side code
 Made by S.H, K.H, Y.H
 
 ## Requirements
-Python==3.7.3
-& requiremnets.txt
+ - node==v10.16.0
+
+## Installation
+    git clone https://github.com/KueNiYam/Gardenia-Server
+    
+## Usage
+    node app.js
